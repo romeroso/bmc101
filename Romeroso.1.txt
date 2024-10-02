@@ -1,0 +1,83 @@
+import 'package:flutter/material.dart';
+
+class Product{
+  const Product({required this.name});
+  final String name;
+}
+
+
+typedef CartChangeCallback = Function (Product product, bool inCart );
+
+class ShoppingListItem extends StatelessWidget {
+  ShoppingListItem({
+    required this.product,
+    required this.inCart,
+    required this.onCartChange,
+  }) : super(key: ObjectKey(product));
+  
+  final Product product;
+  final bool inCart;
+  final CartChangeCallback onCartChange;
+
+
+
+@override
+Widget build(BuildContext context) {
+    // TODO: implement build
+    return ListTile(
+      onTap: () {
+        onCartChange(product, inCart);
+      },
+      leading: CircleAvatar(
+        backgroundColor: _getcolor(context),
+        child:  Text(product.name[0]),
+      ),
+      title: Text (
+        product.name,
+      style: _getTextStyle(context),
+      ),
+    );
+  }
+
+}
+
+
+class Shopping extends StatefulWidget{
+const ShoppingList ({required this.product, supper.key});
+final List<Product> product;
+
+State<Shopping> createState() => _ShoppingListState();
+}
+
+class _ShoppingListState extends State<ShoppingList> {
+  final _shoppingCart = <Product>{};
+
+  void _handleCartChange(Product product, bool inCart) {
+    setState(() {
+          if (inCart){
+            _shoppingCart.add(product);
+          } else {
+            _shoppingCart.remove(product);
+          }
+        });
+  }
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('shopping List'),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        children: widget.product.map((product){
+          return ShoppingListItem(
+            product: product,
+            inCart: _ShoppingCart.contains(product),
+            onCartChange: _handleCartChange,
+          );
+        }),
+      ),
+    );
+  }
+}
